@@ -40,7 +40,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.delete = asyncHandler(async (req, res, next) => {
   const post = await Post.findById(req.params.id);
-  if (req.user.admin === true) {
+  if (req.user.admin === true || req.user._id === post.user) {
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: 'Post deleted' });
   } else {
