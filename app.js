@@ -1,11 +1,23 @@
 var createError = require('http-errors');
 var express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const MongoDBKey = process.env.MONGODB_KEY;
+const dev_db_url = `mongodb+srv://admin:${MongoDBKey}@cluster0.lnrds0m.mongodb.net/members_only?retryWrites=true&w=majority`;
+const mongoDB = dev_db_url;
+
+mongoose.set('strictQuery', false);
+main().catch((err) => debug(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 var app = express();
 
@@ -23,12 +35,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
