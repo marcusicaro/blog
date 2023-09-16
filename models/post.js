@@ -11,7 +11,7 @@ const PostsSchema = new Schema({
 });
 
 PostsSchema.virtual('url').get(function () {
-  return `/post/${this._id}`;
+  return `/posts/${this._id}`;
 });
 
 // Define a virtual property for formatted date

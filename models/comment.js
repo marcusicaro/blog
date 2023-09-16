@@ -7,10 +7,11 @@ const CommentsSchema = new Schema({
   timestamp: { type: Date, required: true },
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   text: { type: String, required: true },
+  post: { type: Schema.Types.ObjectId, ref: 'Post', required: true },
 });
 
 CommentsSchema.virtual('url').get(function () {
-  return `/comment/${this._id}`;
+  return `/comments/${this._id}`;
 });
 
 // Define a virtual property for formatted date
