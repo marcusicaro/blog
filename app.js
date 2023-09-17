@@ -8,9 +8,8 @@ var logger = require('morgan');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const MongoDBKey = process.env.MONGODB_KEY;
-const dev_db_url = `mongodb+srv://admin:${MongoDBKey}@cluster0.lnrds0m.mongodb.net/members_only?retryWrites=true&w=majority`;
+const dev_db_url = `mongodb+srv://admin:${MongoDBKey}@cluster0.lnrds0m.mongodb.net/blog?retryWrites=true&w=majority`;
 const mongoDB = dev_db_url;
 
 mongoose.set('strictQuery', false);
@@ -32,7 +31,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -47,7 +45,9 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json('there was an error');
 });
+
+app.listen(3000, () => console.log('app listening on port 3000!'));
 
 module.exports = app;

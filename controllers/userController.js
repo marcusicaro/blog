@@ -2,7 +2,9 @@ const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
+const config = require('../config/auth.config.js');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 
 exports.create = asyncHandler(async (req, res, next) => {
   body('username', 'Username must not be empty.')
@@ -18,19 +20,17 @@ exports.create = asyncHandler(async (req, res, next) => {
     .isLength({ min: 1 })
     .escape();
 
-  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-    try {
-      const user = new User({
-        username: req.body.username,
-        password: hashedPassword,
-        email: req.body.email,
-      });
-      const result = await user.save();
-      res.json({ message: 'User created' });
-    } catch (err) {
-      return res.status(400).json({ error: err });
-    }
-  });
+  try {
+    const user = new User({
+      username: req.body.username,
+      password: bcrypt.hashSync(req.body.password, 10),
+      email: req.body.email,
+    });
+    const result = await user.save();
+    res.json({ message: 'User created' });
+  } catch (err) {
+    return res.status(400).json({ error: err });
+  }
 });
 
 exports.delete = asyncHandler(async (req, res, next) => {
@@ -43,21 +43,29 @@ exports.delete = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.authenticate = asyncHandler(async (req, res, next) => {
+exports.signin = asyncHandler(async (req, res, next) => {
   const { username, password } = req.body;
-  User.findOne({ username, password }, (err, user) => {
-    if (err || !user) {
+  try {
+    const user = await User.findOne({ username: username });
+
+    var passwordIsValid = bcrypt.compareSync(password, user.password);
+
+    if (!user || !passwordIsValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Generate JWT
     const token = jwt.sign(
       { id: user._id, username: user.username },
-      'your_secret_key_here',
+      config.secret,
       { expiresIn: '1h' }
     );
 
+    res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+
     // Send the token in the response
     res.json({ token });
-  });
+  } catch (err) {
+    res.json({ error: err });
+  }
 });
