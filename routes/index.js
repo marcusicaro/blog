@@ -8,7 +8,7 @@ const verifyToken = require('../middlewares/verify');
 // posts
 router.get('/posts', post_controller.get_all);
 router.get('/posts/:id', post_controller.get_one);
-router.post('/posts', post_controller.create);
+router.post('/posts', verifyToken, post_controller.create);
 router.delete('/posts/:id', post_controller.delete);
 
 // comments

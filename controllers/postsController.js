@@ -28,7 +28,7 @@ exports.create = asyncHandler(async (req, res, next) => {
     title: req.body.title,
     content: req.body.content,
     timestamp: new Date(),
-    user: req.user._id,
+    user: req.user,
   });
   try {
     await post.save();
