@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 const asyncHandler = require('express-async-handler');
 
@@ -24,13 +25,19 @@ exports.create = asyncHandler(async (req, res, next) => {
     .trim()
     .isLength({ min: 1 })
     .escape();
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-    timestamp: new Date(),
-    user: req.user,
-  });
   try {
+    const user = await User.findById(req.userId).exec();
+
+    if (user.admin === false) {
+      return res.status(400).json({ error: 'user is not allowed to post' });
+    }
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      timestamp: new Date(),
+      user: user,
+    });
+
     await post.save();
     res.json({ message: 'Post created' });
   } catch (err) {

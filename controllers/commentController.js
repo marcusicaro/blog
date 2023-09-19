@@ -1,5 +1,6 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
+const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 const asyncHandler = require('express-async-handler');
 
@@ -17,15 +18,16 @@ exports.create = asyncHandler(async (req, res, next) => {
     .isLength({ min: 1 })
     .escape();
   body('text', 'Text must not be empty.').trim().isLength({ min: 1 }).escape();
-  const post = Post.findById(req.params.id);
-  const comment = new Comment({
-    content: req.body.title,
-    timestamp: new Date(),
-    user: req.user._id,
-    text: req.body.text,
-    post: post,
-  });
   try {
+    const post = await Post.findById(req.params.id);
+    const user = await User.findById(req.userId).exec();
+    const comment = new Comment({
+      title: req.body.title,
+      timestamp: new Date(),
+      user: user,
+      text: req.body.text,
+      post: post,
+    });
     await comment.save();
     res.json({ message: 'Comment created' });
   } catch (err) {

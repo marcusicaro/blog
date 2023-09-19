@@ -48,6 +48,6 @@ app.use(function (err, req, res, next) {
   res.json('there was an error');
 });
 
-app.listen(3000, () => console.log('app listening on port 3000!'));
+app.listen(3001, () => console.log('app listening on port 3000!'));
 
 module.exports = app;

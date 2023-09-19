@@ -9,7 +9,7 @@ const verifyToken = require('../middlewares/verify');
 router.get('/posts', post_controller.get_all);
 router.get('/posts/:id', post_controller.get_one);
 router.post('/posts', verifyToken, post_controller.create);
-router.delete('/posts/:id', post_controller.delete);
+router.delete('/posts/:id', verifyToken, post_controller.delete);
 
 // comments
 router.get(
@@ -18,11 +18,11 @@ router.get(
 );
 router.get('/comments', comment_controller.get_all);
 router.post('/comments/:id', verifyToken, comment_controller.create);
-router.delete('/comments/:id', comment_controller.delete);
+router.delete('/comments/:id', verifyToken, comment_controller.delete);
 
 // users
 router.post('/users', user_controller.create);
 router.post('/users/signin', user_controller.signin);
-router.delete('/users/:id', user_controller.delete);
+router.delete('/users/:id', verifyToken, user_controller.delete);
 
 module.exports = router;
