@@ -17,8 +17,8 @@ router.get(
   comment_controller.get_all_comments_on_a_specific_post
 );
 router.get('/comments', comment_controller.get_all);
-router.post('/comments/:id', verifyToken, comment_controller.create);
-router.delete('/comments/:id', verifyToken, comment_controller.delete);
+router.post('/comments/:postId', verifyToken, comment_controller.create);
+router.delete('/comments/:commentId', verifyToken, comment_controller.delete);
 
 // users
 router.post('/users', user_controller.create);

@@ -7,7 +7,8 @@ const asyncHandler = require('express-async-handler');
 exports.get_all = asyncHandler(async (req, res, next) => {
   const allComments = await Comment.find({})
     .sort({ timestamp: 1 })
-    .populate({ user: 'user', post: 'post' })
+    .populate('user')
+    .populate('post')
     .exec();
   res.json({ comments: allComments });
 });
@@ -19,7 +20,7 @@ exports.create = asyncHandler(async (req, res, next) => {
     .escape();
   body('text', 'Text must not be empty.').trim().isLength({ min: 1 }).escape();
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postId);
     const user = await User.findById(req.userId).exec();
     const comment = new Comment({
       title: req.body.title,
@@ -37,17 +38,19 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.get_all_comments_on_a_specific_post = asyncHandler(
   async (req, res, next) => {
+    let a = await Comment.find({});
     const comments = await Comment.find({ post: req.params.id })
       .sort({ timestamp: 1 })
-      .populate({ user: 'user', post: 'post' })
+      .populate('post')
+      .populate('user')
       .exec();
     res.json({ comments: comments });
   }
 );
 
 exports.delete = asyncHandler(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
-  if (req.user.admin === true || req.user._id === comment.user) {
+  const comment = await Comment.findById(req.params.commentId);
+  if (req.user.admin === true || req.userId === comment.user._id) {
     await Comment.findByIdAndDelete(req.params.id);
     res.json({ message: 'Comment deleted' });
   } else {
