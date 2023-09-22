@@ -12,8 +12,12 @@ exports.get_all = asyncHandler(async (req, res, next) => {
 });
 
 exports.get_one = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).populate('user').exec();
-  res.json({ post: post });
+  try {
+    const post = await Post.findById(req.params.id).populate('user').exec();
+    res.json({ post: post });
+  } catch (err) {
+    return res.status(400).json({ error: err });
+  }
 });
 
 exports.create = asyncHandler(async (req, res, next) => {
