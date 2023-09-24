@@ -49,11 +49,16 @@ exports.get_all_comments_on_a_specific_post = asyncHandler(
 );
 
 exports.delete = asyncHandler(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.commentId);
-  if (req.user.admin === true || req.userId === comment.user._id) {
-    await Comment.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Comment deleted' });
-  } else {
-    res.json({ message: 'You are not authorized to delete this comment' });
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    const user = await User.findById(req.userId).exec();
+    if (user.admin === true || req.userId === comment.user._id) {
+      await Comment.findByIdAndDelete(req.params.commentId);
+      res.json({ message: 'Comment deleted' });
+    } else {
+      res.json({ message: 'You are not authorized to delete this comment' });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: err });
   }
 });
