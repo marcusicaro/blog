@@ -4,7 +4,8 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config.js');
 const bcrypt = require('bcryptjs');
-const cookieParser = require('cookie-parser');
+require('dotenv').config();
+const AdminPassword = process.env.ADMIN_PASSWORD;
 
 exports.create = asyncHandler(async (req, res, next) => {
   body('username', 'Username must not be empty.')
@@ -23,7 +24,10 @@ exports.create = asyncHandler(async (req, res, next) => {
   try {
     const user = new User({
       username: req.body.username,
-      password: bcrypt.hashSync(req.body.password, 10),
+      password:
+        req.body.password.length > 0
+          ? bcrypt.hashSync(req.body.password, 10)
+          : req.body.password,
       email: req.body.email,
     });
     const result = await user.save();
@@ -68,4 +72,32 @@ exports.signin = asyncHandler(async (req, res, next) => {
   } catch (err) {
     res.json({ error: err });
   }
+});
+
+exports.get_user_admin_status = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId).exec();
+    res.json({ admin: user.admin });
+  } catch (err) {
+    return res.status(400).json({ error: err });
+  }
+});
+
+exports.change_user_admin_status = asyncHandler(async (req, res, next) => {
+  if (req.body.adminPassword === AdminPassword)
+    try {
+      const user = await User.findById(req.userId).exec();
+      User.findByIdAndUpdate(user._id, { admin: !user.admin }).exec();
+      res.json({ message: 'User admin status changed', valid: true });
+    } catch (err) {
+      return res.status(400).json({ error: err });
+    }
+  else {
+    res.status(401).json({ message: 'Wrong admin password' });
+  }
+});
+
+exports.signout = asyncHandler(async (req, res, next) => {
+  res.clearCookie('token');
+  res.json({ message: 'User signed out' });
 });

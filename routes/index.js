@@ -21,8 +21,15 @@ router.post('/comments/:postId', verifyToken, comment_controller.create);
 router.delete('/comments/:commentId', verifyToken, comment_controller.delete);
 
 // users
-router.post('/users', user_controller.create);
-router.post('/users/signin', user_controller.signin);
+router.get('/users/admin', verifyToken, user_controller.get_user_admin_status);
 router.delete('/users/:id', verifyToken, user_controller.delete);
+router.post('/users/signup', user_controller.create);
+router.post('/users/signin', user_controller.signin);
+router.post('/users/signout', user_controller.signout);
+router.post(
+  '/users/admin',
+  verifyToken,
+  user_controller.change_user_admin_status
+);
 
 module.exports = router;
