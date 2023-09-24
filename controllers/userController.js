@@ -97,7 +97,7 @@ exports.change_user_admin_status = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.signout = asyncHandler(async (req, res, next) => {
+exports.logout = asyncHandler(async (req, res, next) => {
   res.clearCookie('token');
   res.json({ message: 'User signed out' });
 });

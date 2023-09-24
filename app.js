@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+const debug = require('debug')('app');
 var express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();

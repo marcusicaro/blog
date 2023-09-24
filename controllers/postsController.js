@@ -4,11 +4,15 @@ const { body, validationResult } = require('express-validator');
 const asyncHandler = require('express-async-handler');
 
 exports.get_all = asyncHandler(async (req, res, next) => {
-  const allPosts = await Post.find({})
-    .sort({ timestamp: 1 })
-    .populate('user')
-    .exec();
-  res.json({ posts: allPosts });
+  try {
+    const allPosts = await Post.find({})
+      .sort({ timestamp: 1 })
+      .populate('user')
+      .exec();
+    res.json({ posts: allPosts });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 exports.get_one = asyncHandler(async (req, res, next) => {

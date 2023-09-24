@@ -25,7 +25,7 @@ router.get('/users/admin', verifyToken, user_controller.get_user_admin_status);
 router.delete('/users/:id', verifyToken, user_controller.delete);
 router.post('/users/signup', user_controller.create);
 router.post('/users/signin', user_controller.signin);
-router.post('/users/signout', user_controller.signout);
+router.post('/users/logout', user_controller.logout);
 router.post(
   '/users/admin',
   verifyToken,
