@@ -7,6 +7,14 @@ const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const AdminPassword = process.env.ADMIN_PASSWORD;
 
+exports.get_login_data = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId).exec();
+    res.json({ username: user.username, admin: user.admin });
+  } catch (err) {
+    return res.status(400).json({ error: err });
+  }
+});
 exports.create = asyncHandler(async (req, res, next) => {
   body('username', 'Username must not be empty.')
     .trim()

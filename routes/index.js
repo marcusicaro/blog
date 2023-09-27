@@ -21,6 +21,7 @@ router.post('/comments/:postId', verifyToken, comment_controller.create);
 router.delete('/comments/:commentId', verifyToken, comment_controller.delete);
 
 // users
+router.get('/username', verifyToken, user_controller.get_login_data);
 router.get('/users/admin', verifyToken, user_controller.get_user_admin_status);
 router.delete('/users/:id', verifyToken, user_controller.delete);
 router.post('/users/signup', user_controller.create);
