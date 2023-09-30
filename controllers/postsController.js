@@ -67,8 +67,7 @@ exports.edit = asyncHandler(async (req, res, next) => {
   try {const post = await Post.findById(req.params.id).populate('user').exec();
     const user = await User.findById(req.userId).exec();
   if (user.admin === true || req.userId === post.user._id) {
-   try{ 
-    const newPost = new Post({
+    const editedPost = new Post({
       _id: post.id,
       timestamp: post.timestamp,
       visible: req.body.visible !== undefined ? req.body.visible : post.visible,
@@ -76,11 +75,8 @@ exports.edit = asyncHandler(async (req, res, next) => {
       content: req.body.content,
       user: post.user
     });
-    await Post.findByIdAndUpdate(req.params.id, newPost, {});
-    res.json({ message: 'Post updated' }); }
-    catch (err) {
-      res.json({ error: err });
-    }
+    await Post.findByIdAndUpdate(req.params.id, editedPost, {});
+    res.json({ message: 'Post updated' }); 
   } else {
     res.json({ error: 'You are not authorized to edit this post' });
   }}     catch (err) {

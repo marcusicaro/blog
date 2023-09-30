@@ -61,3 +61,25 @@ exports.delete = asyncHandler(async (req, res, next) => {
     return res.status(400).json({ error: err });
   }
 });
+exports.edit = asyncHandler(async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId).exec();
+    const user = await User.findById(req.userId).exec();
+    if (user.admin === true || req.userId === comment.user._id) {
+      const editedComment = new Post({
+        _id: comment.id,
+        timestamp: comment.timestamp,
+        post: comment.post,
+        title: req.body.title,
+        content: req.body.content,
+        user: comment.user
+      });
+      await Comment.findByIdAndDelete(req.params.commentId);
+      res.json({ message: 'Comment edited' });
+    } else {
+      res.json({ error: 'You are not authorized to edit this comment' });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: err });
+  }
+})
