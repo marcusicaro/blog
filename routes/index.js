@@ -10,6 +10,7 @@ router.get('/posts', post_controller.get_all);
 router.get('/posts/:id', post_controller.get_one);
 router.post('/posts', verifyToken, post_controller.create);
 router.delete('/posts/:id', verifyToken, post_controller.delete);
+router.post('/posts/:id', verifyToken, post_controller.edit);
 
 // comments
 router.get(

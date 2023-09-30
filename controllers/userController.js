@@ -51,7 +51,7 @@ exports.delete = asyncHandler(async (req, res, next) => {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });
   } else {
-    res.json({ message: 'You are not authorized to delete this user' });
+    res.json({ error: 'You are not authorized to delete this user' });
   }
 });
 

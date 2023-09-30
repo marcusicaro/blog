@@ -55,10 +55,35 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.delete = asyncHandler(async (req, res, next) => {
   const post = await Post.findById(req.params.id);
-  if (req.user.admin === true || req.user._id === post.user) {
+  if (req.user.admin === true || req.userId === post.user) {
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: 'Post deleted' });
   } else {
-    res.json({ message: 'You are not authorized to delete this post' });
+    res.json({ error: 'You are not authorized to delete this post' });
   }
 });
+
+exports.edit = asyncHandler(async (req, res, next) => {
+  try {const post = await Post.findById(req.params.id).populate('user').exec();
+    const user = await User.findById(req.userId).exec();
+  if (user.admin === true || req.userId === post.user._id) {
+   try{ 
+    const newPost = new Post({
+      _id: post.id,
+      timestamp: post.timestamp,
+      visible: req.body.visible !== undefined ? req.body.visible : post.visible,
+      title: req.body.title,
+      content: req.body.content,
+      user: post.user
+    });
+    await Post.findByIdAndUpdate(req.params.id, newPost, {});
+    res.json({ message: 'Post updated' }); }
+    catch (err) {
+      res.json({ error: err });
+    }
+  } else {
+    res.json({ error: 'You are not authorized to edit this post' });
+  }}     catch (err) {
+    res.json({ error: err });
+  }
+})

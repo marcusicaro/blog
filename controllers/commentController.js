@@ -38,7 +38,6 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.get_all_comments_on_a_specific_post = asyncHandler(
   async (req, res, next) => {
-    let a = await Comment.find({});
     const comments = await Comment.find({ post: req.params.id })
       .sort({ timestamp: 1 })
       .populate('post')
@@ -50,13 +49,13 @@ exports.get_all_comments_on_a_specific_post = asyncHandler(
 
 exports.delete = asyncHandler(async (req, res, next) => {
   try {
-    const comment = await Comment.findById(req.params.commentId);
+    const comment = await Comment.findById(req.params.commentId).exec();
     const user = await User.findById(req.userId).exec();
     if (user.admin === true || req.userId === comment.user._id) {
       await Comment.findByIdAndDelete(req.params.commentId);
       res.json({ message: 'Comment deleted' });
     } else {
-      res.json({ message: 'You are not authorized to delete this comment' });
+      res.json({ error: 'You are not authorized to delete this comment' });
     }
   } catch (err) {
     return res.status(400).json({ error: err });
