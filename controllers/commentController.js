@@ -64,6 +64,7 @@ exports.delete = asyncHandler(async (req, res, next) => {
 exports.edit = asyncHandler(async (req, res, next) => {
   try {
     const comment = await Comment.findById(req.params.commentId).exec();
+    console.log(comment)
     const user = await User.findById(req.userId).exec();
     if (user.admin === true || req.userId === comment.user._id) {
       const editedComment = new Post({
@@ -74,7 +75,7 @@ exports.edit = asyncHandler(async (req, res, next) => {
          content: req.body.content,
        user: comment.user
       });
-      await Comment.findByIdAndDelete(req.params.commentId);
+      await Comment.findByIdAndUpdate(req.params.commentId, editedComment, {});
       res.json({ message: 'Comment edited' });
     } else {
       res.json({ error: 'You are not authorized to edit this comment' });

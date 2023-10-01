@@ -7,20 +7,20 @@ const verifyToken = require('../middlewares/verify');
 
 // posts
 router.get('/posts', post_controller.get_all);
-router.get('/posts/:id', post_controller.get_one);
+router.get('/posts/:postId', post_controller.get_one);
 router.post('/posts', verifyToken, post_controller.create);
-router.delete('/posts/:id', verifyToken, post_controller.delete);
-router.post('/posts/:id', verifyToken, post_controller.edit);
+router.delete('/posts/:postId', verifyToken, post_controller.delete);
+router.post('/posts/:postId', verifyToken, post_controller.edit);
 
 // comments
 router.get(
-  '/:postId/comments',
+  '/posts/:postId/comments',
   comment_controller.get_all_comments_on_a_specific_post
 );
 router.get('/comments', comment_controller.get_all);
-router.post('/:postId/comments', verifyToken, comment_controller.create);
-router.delete('/:postId/comments/:commentId', verifyToken, comment_controller.delete);
-router.post('/:postId/comments/:commentId', verifyToken, comment_controller.edit);
+router.post('/posts/:postId/comments', verifyToken, comment_controller.create);
+router.delete('/posts/:postId/comments/:commentId', verifyToken, comment_controller.delete);
+router.post('/posts/:postId/comments/:commentId', verifyToken, comment_controller.edit);
 
 // users
 router.get('/username', verifyToken, user_controller.get_login_data);
