@@ -38,7 +38,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.get_all_comments_on_a_specific_post = asyncHandler(
   async (req, res, next) => {
-    const comments = await Comment.find({ post: req.params.id })
+    const comments = await Comment.find({ post: req.params.postId })
       .sort({ timestamp: 1 })
       .populate('post')
       .populate('user')
@@ -71,8 +71,8 @@ exports.edit = asyncHandler(async (req, res, next) => {
         timestamp: comment.timestamp,
         post: comment.post,
         title: req.body.title,
-        content: req.body.content,
-        user: comment.user
+         content: req.body.content,
+       user: comment.user
       });
       await Comment.findByIdAndDelete(req.params.commentId);
       res.json({ message: 'Comment edited' });

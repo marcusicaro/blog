@@ -14,12 +14,13 @@ router.post('/posts/:id', verifyToken, post_controller.edit);
 
 // comments
 router.get(
-  '/comments/:id',
+  '/:postId/comments',
   comment_controller.get_all_comments_on_a_specific_post
 );
 router.get('/comments', comment_controller.get_all);
-router.post('/comments/:postId', verifyToken, comment_controller.create);
-router.delete('/comments/:commentId', verifyToken, comment_controller.delete);
+router.post('/:postId/comments', verifyToken, comment_controller.create);
+router.delete('/:postId/comments/:commentId', verifyToken, comment_controller.delete);
+router.post('/:postId/comments/:commentId', verifyToken, comment_controller.edit);
 
 // users
 router.get('/username', verifyToken, user_controller.get_login_data);
