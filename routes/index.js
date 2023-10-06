@@ -19,8 +19,16 @@ router.get(
 );
 router.get('/comments', comment_controller.get_all);
 router.post('/posts/:postId/comments', verifyToken, comment_controller.create);
-router.delete('/posts/:postId/comments/:commentId', verifyToken, comment_controller.delete);
-router.post('/posts/:postId/comments/:commentId', verifyToken, comment_controller.edit);
+router.delete(
+  '/posts/:postId/comments/:commentId',
+  verifyToken,
+  comment_controller.delete
+);
+router.post(
+  '/posts/:postId/comments/:commentId',
+  verifyToken,
+  comment_controller.edit
+);
 
 // users
 router.get('/username', verifyToken, user_controller.get_login_data);

@@ -7,6 +7,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const passport = require('passport');
+var cors = require('cors');
 const LocalStrategy = require('passport-local').Strategy;
 var indexRouter = require('./routes/index');
 const MongoDBKey = process.env.MONGODB_KEY;
@@ -18,39 +19,20 @@ main().catch((err) => debug(err));
 async function main() {
   await mongoose.connect(mongoDB);
 }
+var whitelist = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
 
 var app = express();
 
-// Add headers before the routes are defined
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader(
-    'Access-Control-Allow-Origin',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://localhost:3003'
-  );
-
-  // Request methods you wish to allow
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-  );
-
-  // Request headers you wish to allow
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-Requested-With,content-type'
-  );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
-});
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
